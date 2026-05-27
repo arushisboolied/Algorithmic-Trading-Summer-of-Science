@@ -1,0 +1,122 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{parskip}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{booktabs}
+\usepackage[round]{natbib}
+\usepackage{microtype}
+\usepackage{xcolor}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!60!black,
+  citecolor=blue!60!black,
+  urlcolor=blue!60!black
+}
+
+\titleformat{\section}{\large\bfseries}{}{0em}{}[\titlerule]
+\titleformat{\subsection}{\normalsize\bfseries}{}{0em}{}
+
+\setstretch{1.2}
+
+\title{\textbf{Week 1 Report}\\[0.4em]
+  \large Algorithmic Trading --- Summer of Science}
+\author{Arush Anand}
+\date{May 2026}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+%% ──────────────────────────────────────────────────────────────────
+\section{Chapter 1 Summary: \textit{Quantitative Trading} by E.\ P.\ Chan}
+%% ──────────────────────────────────────────────────────────────────
+
+\subsection{What Is Quantitative Trading?}
+
+\citet{chan2021} says that Quantitative Trading is the trading of 
+securities based strictly on the buy/sell decisions of computer 
+algorithms. It is not quite a technical analysis as only metrics
+that are quantifiable (as opposed to them being qualitative) are
+used in Quantitative Trading. 
+
+
+\subsection{Who Can Become a Quantitative Trader?}
+
+In his own words, 
+"The ideal independent quantitative trader is therefore someone
+who has some prior experience with finance or computer programming,
+who has enough savings to withstand the inevitable losses and
+periods without income, and whose emotion has found the right balance 
+between fear and greed." This ideal trader might not have the academic
+qualifications of the stereotypical algorithmic trader, as thats not
+a prerequisite or even that big of an edge over the layman.
+
+\subsection{The Business Case for Quantitative Trading}
+
+Chan frames a quantitative trading operation as a small business and
+then identifies three ways in which it differs favourably from most
+other ventures.
+
+\subsubsection*{Scalability}
+Increasing the size of a quantitative portfolio often requires nothing
+more than adjusting a leverage parameter in code. No venture capital,
+no bank negotiation. Proprietary trading firms can offer intraday
+leverage of up to $\times$40 on equity, while futures and currency
+accounts routinely provide $\times$10 or more from standard brokerages.
+Chan warns, however, that leverage is a double-edged sword and should
+never be chased for its own sake.
+
+\subsubsection*{Demand on Time}
+Automation is intrinsic to algorithmic trading. In Chan's own workflow,
+day-to-day operations (data downloads, signal generation, order
+transmission) initially consumed roughly two and a half hours around
+the market open and close; over time these were fully automated until
+active intervention fell to zero. Research and strategy development 
+can be scheduled flexibly. The largest psychological challenge, 
+Chan admits, is resisting the urge to manually override positions 
+during intraday drawdowns. 
+
+\subsubsection*{No Marketing Required}
+In most businesses revenue depends on persuading customers. In trading,
+the counterparty's only concern is price. As long as a trader is not
+managing outside money, the product (the strategy) markets itself
+through its P\&L. This freedom from salesmanship is, for many
+practitioners, the greatest appeal of the profession.
+
+\bigskip
+\noindent\textbf{Key takeaways from Chapter~1:}
+\begin{itemize}
+  \item Quantitative trading is a form of systematic, algorithm-driven trading.
+  \item In a search for complex strategies, it is usually the simpler ones which would benefit us more.
+  \item The business advantages are scalability, time efficiency through automation, and zero marketing overhead.
+\end{itemize}
+
+%% ──────────────────────────────────────────────────────────────────
+\newpage
+\section{Kaggle Pandas Certificate}
+%% ──────────────────────────────────────────────────────────────────
+
+As part of the Week~1 curriculum I completed the \textbf{Pandas} course
+on Kaggle, which covers the core data-manipulation library used
+throughout quantitative research in Python. The certificate of
+completion is reproduced below.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{{Arush Anand - Pandas}}
+  \caption{Kaggle Pandas course certificate --- Arush Anand.}
+  \label{fig:certificate}
+\end{figure}
+
+%% ──────────────────────────────────────────────────────────────────
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}
