@@ -1,0 +1,125 @@
+\documentclass[11pt,a4paper]{article}
+
+% ── Geometry & fonts ──────────────────────────────────────────────────────────
+\usepackage[top=1in, bottom=1in, left=1.25in, right=1.25in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+
+% ── Layout helpers ────────────────────────────────────────────────────────────
+\usepackage{parskip}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage[hidelinks]{hyperref}
+
+% ── Spacing ───────────────────────────────────────────────────────────────────
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+
+% Section headings: large bold, unnumbered, compact
+\titleformat{\section}{\large\bfseries}{}{0em}{}
+\titlespacing*{\section}{0pt}{14pt}{6pt}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\begin{document}
+
+% ── Title block ───────────────────────────────────────────────────────────────
+\begin{center}
+  {\LARGE SoS 2026: Algorithmic Trading}\\[6pt]
+  {\large\textbf{Plan of Action}}\\[10pt]
+  Arush Anand\\
+  Mentor: Vedant Maheshwari\\[6pt]
+  May 23, 2026
+\end{center}
+
+\bigskip
+
+% ── Timeline ──────────────────────────────────────────────────────────────────
+\section{Timeline}
+
+% Reusable description-list style (Week N | topics)
+\newlist{weeklist}{description}{1}
+\setlist[weeklist]{
+  labelwidth  = 5em,
+  leftmargin  = 5.5em,
+  labelsep    = 0.5em,
+  style       = sameline,
+  font        = \normalfont\bfseries,
+  topsep      = 0pt,
+  parsep      = 0pt,
+  itemsep     = 5pt,
+}
+
+\begin{weeklist}
+
+\item[Week 1] Orientation \& First Data: what quant and algorithmic trading
+  actually is and who does it. Study just enough market vocabulary for a coder:
+  instruments, exchanges, returns, volatility; pull real historical price data
+  in Python, clean it, and plot it. \textit{(Chan Ch.~1)}
+
+\item[Week 2] Fishing for Ideas: where strategies come from, plausible
+  strategies and their pitfalls, the intuition behind mean reversion vs.
+  momentum. Hand-code the signal logic for a simple moving-average crossover
+  and run it on the data from Week~1. \textit{(Chan Ch.~2)}
+
+\item[Week 3] Backtesting I: Backtesting platforms and
+  data sources, writing my own simple backtester in Python, key performance
+  metrics (Sharpe ratio, maximum drawdown, annualised returns); get a full
+  end-to-end backtest running on my Week-2 strategy. \textit{(Chan Ch.~3)}
+
+\item[Week 4] Backtesting II: Biases that make backtests lie
+  look-ahead, survivorship, data-snooping plus transaction costs and
+  slippage; deliberately expose and then fix these flaws in my Week-3
+  backtest; re-evaluate performance honestly. \textit{(Chan Ch.~3)}
+
+\end{weeklist}
+
+\begin{center}
+  \textbf{Mid-term Report Submission}\\
+  \textit{\small Deliverable: a working, honestly-evaluated backtested strategy}
+\end{center}
+
+\begin{weeklist}
+
+\item[Week 5] Mean Reversion \& Pairs Trading: build a second, more
+  interesting strategy end-to-end, cointegration testing, spread
+  construction, entry/exit signals, backtest and compare against Week-2
+  strategy; bridges Chan's practice into Cartea's statistical-arbitrage
+  framing. \textit{(Chan Ch.~2--3; Cartea pairs-trading chapter)}
+
+\item[Week 6] Market Microstructure \& the Order Book: Study electronic market structure,
+  the limit order book (LOB), order types (market, limit, cancel), bid--ask
+  spread, price formation, adverse selection. \textit{(Cartea Ch.~1--2)}
+
+\item[Week 7] Optimal Execution \& Liquidation: price impact (temporary
+  vs.\ permanent), the optimal liquidation problem, Almgren--Chriss-style
+  execution trajectories, trade scheduling to minimise market impact; the
+  mathematics here directly answers the slippage problems encountered in
+  Week~4. \textit{(Cartea Ch.~5--8)}
+
+\item[Week 8] Market Making, Risk \& Wrap-up: inventory-based and
+  adverse-selection market-making models; money management, position sizing,
+  the Kelly criterion, leverage; assemble the full pipeline. \textit{(Cartea Ch.~10; Chan Ch.~6--8)}
+
+\end{weeklist}
+
+\begin{center}
+  \textbf{End-term Report Submission}\\
+  \textit{\small Deliverable: full pipeline + write-up of what you built and learned}
+\end{center}
+
+\bigskip
+
+% ── References ────────────────────────────────────────────────────────────────
+\section{References}
+
+\textit{Algorithmic and High-Frequency Trading} by
+\textit{\'Alvaro Cartea, Sebasti\'an Jaimungal \& Jos\'e Penalva}
+
+\medskip
+
+\textit{Quantitative Trading: How to Build Your Own Algorithmic Trading
+Business} (2nd ed.)\ by \textit{Ernest P.\ Chan}
+
+\end{document}
