@@ -16,7 +16,7 @@ class Data:
         return df
     
     def _clean(self, df: pd.DataFrame):
-        available = [c for c in self.REQUIRED_COLUMNS if c in df.columns]
+        available = [c for c in self.COLUMNS if c in df.columns]
         df = df[available].copy()
  
         df.ffill(inplace=True)
