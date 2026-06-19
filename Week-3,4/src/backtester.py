@@ -119,8 +119,8 @@ class Backtester:
             template="plotly_white",
             height=700,
         )
-        fig.update_yaxes(title_text="Price ($)",  row=1, col=1)
-        fig.update_yaxes(title_text="Equity ($)", row=2, col=1)
+        fig.update_yaxes(title_text="Price (INR)",  row=1, col=1)
+        fig.update_yaxes(title_text="Equity (INR)", row=2, col=1)
         fig.update_xaxes(title_text="Date",       row=2, col=1)
 
         if save:
