@@ -1,0 +1,129 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage{lmodern}
+\usepackage{microtype}  
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1.2in]{geometry}
+\usepackage{parskip}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+
+\definecolor{accentgray}{gray}{0.35}
+
+\onehalfspacing
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=accentgray,
+    pdftitle={Reading Notes: Quantitative Trading, Chapters 1--3},
+    pdfauthor={Ernest P. Chan (summarised)}
+}
+
+\title{%
+    \Large\textbf{Reading Notes}\\[0.4em]
+    \large\textit{Quantitative Trading: How to Build Your Own Algorithmic Trading Business}\\[0.3em]
+    \normalsize Ernest P.\ Chan \quad\textcolor{accentgray}{(2nd ed., 2021)}\\[0.2em]
+    \normalsize Chapters 1--3
+}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+\tableofcontents
+\newpage
+
+\vspace{-1em}
+\textcolor{accentgray}{\hrule}
+\vspace{1.5em}
+
+
+\section{The Whats, Whos, and Whys of Quantitative Trading}
+
+Chan opens by clearing up a misconception that often hangs around the term. Quantitative trading (sometimes called algorithmic trading) is simply the practice of making buy and sell decisions through computer algorithms that the trader designs, tests on historical data, and then runs live. It is not synonymous with technical analysis, though it can incorporate it. Nor is it restricted to esoteric instruments: the kind Chan advocates is statistical arbitrage on stocks, futures, and currencies, things any reasonably numerate person can engage with without a PhD in stochastic calculus.
+
+Who belongs in the room, then? Chan's answer is deliberately inclusive. His own route was conventional, Cornell physics doctorate, IBM research, a string of investment banks, but many of the independent traders he knows came from software development, exchange floors, biochemistry, or architecture. The common thread is not a credential but a disposition: some prior exposure to how markets work, enough savings that early losses are survivable, and an emotional register that sits comfortably between reckless confidence and paralysing fear. Crucially, he notes that his own most profitable strategies emerged not from the sophisticated techniques he deployed at Morgan Stanley and Credit Suisse, but from the simplest quantitative ideas he eventually tried from a spare bedroom. The Einstein aphorism he quotes, ``make everything as simple as possible, but not simpler'', is less a clich\'{e} here than a thesis statement for the book.
+
+The business case for going independent rests on three structural advantages. The first is scalability: increasing position size often means changing a single number in a program rather than hiring staff or pitching to a bank. With a proprietary trading firm, a \$50,000 equity stake can control a \$2\,million intraday portfolio; futures and currency trading offer similar leverage through ordinary retail brokers. The second advantage is time. Quantitative trading at full automation approaches zero daily operational overhead, Chan describes colleagues who came into the office once a month. His own early routine consumed two hours before the open and half an hour near the close, and that burden shrank as automation improved. The third is the near-total absence of marketing. Because counterparties in financial markets are indifferent to everything except price, a trader managing only her own capital has no customers to cultivate, no reputation to perform. The product and the strategy are the same thing.
+
+This last point carries a small but important caveat. Chan is explicit that quantitative trading is not a path to overnight wealth, the leveraged returns possible through a high Sharpe ratio strategy accumulate steadily rather than explosively. The aspiration is a growing, sustainable income stream, not a windfall.
+
+
+\section{Fishing for Ideas}
+
+The surprise of this chapter is stated plainly at the outset: finding a trading idea is not the hard part. Academic finance journals, business school working-paper repositories (SSRN, NBER), quantitative blogs, trader forums, and social media between them generate a continuous supply of candidate strategies, most of them described in enough detail to attempt replication. Chan keeps a table of sources he finds valuable, Quantpedia, Elite Trader, Flirting with Models, various Twitter accounts, and notes that the public availability of these ideas does not trivially destroy their value, because most people sharing them have not tested the variants that actually work.
+
+The harder task is developing what Chan calls a ``taste'' for strategies, an ability to pre-filter candidates against your personal circumstances before spending weeks backtesting something that was never going to suit you. He organises this filtering around four personal axes.
+
+\textit{Working hours} matter because strategies differ in the attention they demand. Someone with a day job should probably stick to end-of-day signals that can be entered as a batch of limit orders before the open, rather than anything requiring intraday monitoring. Full automation can partially substitute for attention, but only once the system has been built and proven stable.
+
+\textit{Programming skill} determines how many securities you can practically trade at once and whether high-frequency strategies are within reach. A confident Visual Basic or Python user can explore much larger strategy spaces than someone whose ceiling is Excel formulas, though Chan is at pains to point out that many excellent strategies live well within Excel's reach.
+
+\textit{Capital} imposes a web of constraints that Chan maps out honestly. Below roughly \$50,000, the options narrow significantly: commissions become proportionally heavier, survivorship-bias-free data may be unaffordable, and many futures contracts are simply too large to manage prudently. Capital also determines whether dollar-neutral (long--short) strategies are practical. A dollar-neutral book requires twice the margin of a directional one but carries less market risk; the right choice depends on how much leverage is available and at what cost.
+
+\textit{Goal} shapes the preferred holding period. A trader who needs monthly income should choose strategies with high turnover and consequently smoother return distributions. Someone optimising for long-run compounding should seek the highest Sharpe ratio achievable, because, counterintuitively, a high-Sharpe, low-nominal-return strategy run at sufficient leverage outgrows a low-Sharpe, high-nominal-return strategy over time. The buy-and-hold intuition that long horizons reward patience is, Chan argues, mathematically incorrect once leverage is available.
+
+Beyond personal fit, Chan offers a set of red flags to apply before backtesting. Does the strategy outperform a sensible benchmark? A long-only strategy returning 10\% annually in equities is unremarkable; a dollar-neutral one returning 10\% against a near-zero risk-free rate is genuinely interesting. Is the reported Sharpe ratio, or the equity curve's visual texture, consistent with claims of reliability? Deep or protracted drawdowns are almost always incompatible with a high Sharpe ratio. Have transaction costs been accounted for? Chan gives the example of a Bollinger-Band mean-reversion strategy on E-mini S\&P 500 futures that showed a Sharpe of 3 before costs and~$-3$ after a single basis point of friction per trade. Does the data suffer from survivorship bias, the exclusion of stocks that later went bankrupt or were delisted? Has the strategy decayed in more recent years, suggesting either crowding or a structural market change? And does it occupy a niche, low capacity, infrequent signals, unusual instruments, that institutional money cannot easily enter?
+
+The chapter closes with a sidebar on artificial intelligence and stock picking that is worth noting. Chan was sceptical of ML applied directly to market prediction in 2009, and remains so in the second edition, not because the techniques have not improved, but because the problem structure is hostile to them. The number of statistically independent observations in financial time series is far smaller than in consumer transactions or image libraries, making overfitting almost inevitable. His recommended application of ML is ``metalabeling'': using it to estimate the probability that your own private trading signal will be profitable on a given day, rather than predicting the market directly. This way you avoid competing with everyone else trying to extract signal from the same public price series.
+
+
+\section{Backtesting}
+
+Backtesting, running a strategy against historical data to evaluate how it would have performed, is where the quality of an idea is first seriously tested, and where most errors are made. Chan structures the chapter around four topics: the available platforms, the historical data sources and their quirks, the performance metrics that matter, and the pitfalls that produce misleadingly good results.
+
+\subsection*{Platforms}
+
+Chan surveys the main options with a degree of candour unusual in books aimed at practitioners. Excel is his starting point: visible, auditable, resistant to certain subtle errors (look-ahead bias is hard to commit accidentally in a spreadsheet), and capable of handling a surprising range of strategies. MATLAB is his personal preference for heavier work, faster than Python for numerical loops, backed by professional support, and equipped with statistics and econometrics toolboxes that Chan considers superior to their Python equivalents. He is forthright about Python's weaknesses: version conflicts that consume hours even from experienced developers, performance that academic benchmarks place well below MATLAB, no vendor support, and statistics packages he finds inferior to R's. None of this prevents him from providing full Python and R code for every example; he simply does not pretend the language is without cost. QuantConnect and Blueshift round out the survey as web-based platforms that handle data, backtesting, and live execution in a single environment, reducing the risk that the live system subtly differs from the backtested one.
+
+\subsection*{Historical data}
+
+Getting the data right is unglamorous but critical. Two issues dominate. The first is split and dividend adjustment. When a stock splits two-for-one, all historical prices must be halved; when a dividend is paid, all prior prices must be scaled by the ratio of the pre-dividend close to the post-dividend close. Chan walks through the arithmetic in detail using IGE as an example, showing how cumulative multipliers from multiple dividend events compound. Failing to adjust correctly produces spurious signals, a sudden apparent price drop that the algorithm interprets as a trading opportunity when it is actually a data artefact.
+
+The second issue is survivorship bias. A database that contains only stocks still trading today is missing every company that went bankrupt, was acquired, or was delisted between then and now. Because cheap stocks that survive tend to survive precisely because they recovered, backtesting a ``buy cheap stocks'' strategy on survivorship-biased data produces grotesquely inflated returns. Chan illustrates this with a toy portfolio: the ten lowest-priced large-cap stocks at the start of 2001, selected from a survivorship-biased database, returned 388\% over the year; the same selection from a complete database returned $-42\%$. The difference is nine stocks that went to near zero and were silently omitted.
+
+A third, subtler issue is the reliability of intraday high and low prices. Because the recorded high of a day may reflect a single small transaction or a data error, limit orders placed at that level in a backtest often cannot be assumed to have actually filled. Strategies that depend on high/low data for entry and exit signals are systematically more optimistic in backtest than in live trading.
+
+\subsection*{Performance measurement}
+
+The primary metric is the Sharpe ratio, the annualised mean excess return divided by the annualised standard deviation of those excess returns. Chan is methodical about the details that practitioners often fudge: what counts as the risk-free rate (essentially zero at time of writing, but matters for comparison), how to annualise correctly from daily data (multiply mean by 252 and standard deviation by $\sqrt{252}$), and when to use the information ratio instead (when benchmarking a long-only strategy against a market index rather than a risk-free rate). As a rough guide: a Sharpe below 1 is hard to justify as a standalone strategy; above 2 suggests profitability in most months; above 3 suggests profitability in most days.
+
+Drawdown is the companion metric. The maximum drawdown is the largest peak-to-trough decline in cumulative equity; the maximum drawdown duration is the longest time the equity curve spent below a previous high. Chan treats these not as abstract statistics but as personal psychological thresholds: the question is not what the numbers are but whether you can survive them without abandoning the strategy at the worst moment. A strategy that has a drawdown your temperament cannot tolerate is not a good strategy for you, regardless of its long-run expectation.
+
+\subsection*{Pitfalls}
+
+Look-ahead bias, inadvertently using future information to generate a past signal, is the most dangerous error because it is invisible in the code and produces spectacular backtest results. The classic form is using the closing price to generate a signal and then assuming execution at that same close, when in practice the signal cannot be computed until after the market shuts. Chan recommends careful attention to the timing convention: signals computed from day $t$ data should only generate orders executable on day $t{+}1$ or later.
+
+Data-snooping bias, also called overfitting, arises from optimising strategy parameters on the same data used to evaluate the strategy. Even with only one or two parameters, say, a moving average lookback and an entry threshold, there are enough degrees of freedom to fit historical accidents that will not repeat. Chan discusses several mitigation approaches: out-of-sample testing, walk-forward validation, and the Deflated Sharpe Ratio, a correction that accounts for the number of parameter combinations tried. His practical heuristic is simply to prefer fewer parameters and more transparent logic. Models that require elaborate justification for each parameter choice are usually fitting noise.
+
+Transaction costs require more careful treatment than most published research provides. Commission is the smallest component; bid--ask spread, market impact from large orders, and execution slippage from internet latency and software delays all compound on top of it. The Bollinger-Band example from Chapter~2 returns here: a strategy that looked attractive before costs was deeply unprofitable after a single basis point of friction per trade. Chan recommends computing the Sharpe ratio net of realistic transaction cost estimates before ever considering a strategy live-tradable.
+
+The chapter ends with a note on strategy refinement. A candidate strategy pulled from a forum or paper is rarely the final product. Shortening the holding period, changing entry and exit timing, applying the idea to a different instrument or universe, small modifications can turn an unpromising backtest into a primary profit centre. Chan gives a personal example of doing exactly this with a strategy suggested by a blog reader, demonstrating that the creative work in quantitative trading is often not finding the original idea but finding the variation that actually survives contact with real costs and real data.
+
+
+
+\section{Coding Project}
+
+Applied the learnings from these chapters by creating a backtester that evaluates a simple moving average (SMA) trading strategy on historical market data. The project focuses on implementing the complete research workflow discussed by Chan: generating trading signals, simulating trade execution, measuring returns, and evaluating performance metrics through historical backtesting.
+
+The repository is available at:
+\begin{center}
+\url{https://github.com/arushisboolied/Algorithmic-Trading-Summer-of-Science}
+\end{center}
+
+The project served as a practical exercise in translating quantitative trading concepts into code and reinforced the importance of strategy validation, performance measurement, and avoiding common backtesting pitfalls.
+
+\vspace{2em}
+\textcolor{accentgray}{\hrule}
+\vspace{0.5em}
+{\small\textcolor{accentgray}{Source: Chan, Ernest P. \textit{Quantitative Trading: How to Build Your Own Algorithmic Trading Business}, 2nd ed.\ Wiley, 2021.}}
+
+\end{document}
