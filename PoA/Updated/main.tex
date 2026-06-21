@@ -1,0 +1,83 @@
+\documentclass[11pt,a4paper]{article}
+
+% ── Geometry & fonts ──────────────────────────────────────────────────────────
+\usepackage[top=1in, bottom=1in, left=1.25in, right=1.25in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+
+% ── Layout helpers ────────────────────────────────────────────────────────────
+\usepackage{parskip}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage[hidelinks]{hyperref}
+
+% ── Spacing ───────────────────────────────────────────────────────────────────
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+
+% Section headings: large bold, unnumbered, compact
+\titleformat{\section}{\large\bfseries}{}{0em}{}
+\titlespacing*{\section}{0pt}{14pt}{6pt}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\begin{document}
+
+% ── Title block ───────────────────────────────────────────────────────────────
+\begin{center}
+  {\LARGE SoS 2026: Algorithmic Trading}\\[6pt]
+  {\large\textbf{Plan of Action}}\\[10pt]
+  Arush Anand\\
+  Mentor: Vedant Maheshwari\\[6pt]
+  May 23, 2026
+\end{center}
+
+\bigskip
+
+% ── Timeline ──────────────────────────────────────────────────────────────────
+\section{Timeline}
+
+% Reusable description-list style (Week N | topics)
+\newlist{weeklist}{description}{1}
+\setlist[weeklist]{
+  labelwidth  = 5em,
+  leftmargin  = 5.5em,
+  labelsep    = 0.5em,
+  style       = sameline,
+  font        = \normalfont\bfseries,
+  topsep      = 0pt,
+  parsep      = 0pt,
+  itemsep     = 5pt,
+}
+
+\begin{weeklist}
+
+\item[Week 4] Electronic Markets \& the Limit Order Book: how electronic
+  markets function, order types, exchange structures, and the mechanics
+  of the limit order book. \textit{(Cartea Ch.~1)}
+
+\item[Week 5] Market Microstructure: market making models, trading costs,
+  liquidity measurement, adverse selection, and price formation.
+  \textit{(Cartea Ch.~2)}
+
+\item[Week 6] Stochastic Optimal Control: the mathematical framework
+  underlying algorithmic execution strategies: dynamic programming,
+  Hamilton, Jacobi Bellman equations, and optimal stopping.
+  \textit{(Cartea Ch.~5)}
+
+\item[Week 7] Market Making: inventory-based and adverse-selection
+  market-making models; how market makers choose quotes and manage risk.
+  \textit{(Cartea Ch.~10)}
+
+\end{weeklist}
+
+\bigskip
+
+% ── References ────────────────────────────────────────────────────────────────
+\section{References}
+
+\textit{Algorithmic and High-Frequency Trading} by
+\textit{\'Alvaro Cartea, Sebasti\'an Jaimungal \& Jos\'e Penalva}
+
+\end{document}
