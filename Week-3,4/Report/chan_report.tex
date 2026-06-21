@@ -94,9 +94,42 @@ A third, subtler issue is the reliability of intraday high and low prices. Becau
 
 \subsection*{Performance measurement}
 
-The primary metric is the Sharpe ratio, the annualised mean excess return divided by the annualised standard deviation of those excess returns. Chan is methodical about the details that practitioners often fudge: what counts as the risk-free rate (essentially zero at time of writing, but matters for comparison), how to annualise correctly from daily data (multiply mean by 252 and standard deviation by $\sqrt{252}$), and when to use the information ratio instead (when benchmarking a long-only strategy against a market index rather than a risk-free rate). As a rough guide: a Sharpe below 1 is hard to justify as a standalone strategy; above 2 suggests profitability in most months; above 3 suggests profitability in most days.
+The primary metric is the Sharpe ratio, the annualised mean excess return divided by
+the annualised standard deviation of those excess returns:
+\[
+  S = \frac{\mu_e}{\sigma_e},
+  \qquad
+  \mu_e = 252\,\bar{r}_e, \quad \sigma_e = \sqrt{252}\,\hat{\sigma}_e,
+\]
+where $\bar{r}_e$ is the sample mean of daily excess returns and $\hat{\sigma}_e$ is
+their sample standard deviation. Chan is methodical about the details that
+practitioners often fudge: what counts as the risk-free rate (essentially zero at
+time of writing, but matters for comparison), how to annualise correctly from daily
+data (multiply the mean by 252 and the standard deviation by $\sqrt{252}$), and when
+to use the information ratio instead---defined as
+\[
+  \mathrm{IR} = \frac{\mu_p - \mu_b}{\sigma_{p-b}},
+\]
+where $\mu_p$ and $\mu_b$ are the annualised returns of the portfolio and benchmark
+respectively and $\sigma_{p-b}$ is the annualised standard deviation of the active
+return $r_p - r_b$---when benchmarking a long-only strategy against a market index
+rather than a risk-free rate. As a rough guide: a Sharpe below 1 is hard to justify
+as a standalone strategy; above 2 suggests profitability in most months; above 3
+suggests profitability in most days.
 
-Drawdown is the companion metric. The maximum drawdown is the largest peak-to-trough decline in cumulative equity; the maximum drawdown duration is the longest time the equity curve spent below a previous high. Chan treats these not as abstract statistics but as personal psychological thresholds: the question is not what the numbers are but whether you can survive them without abandoning the strategy at the worst moment. A strategy that has a drawdown your temperament cannot tolerate is not a good strategy for you, regardless of its long-run expectation.
+Drawdown is the companion metric. If $V(t)$ denotes the equity curve, define the
+running peak $M(t) = \max_{s \le t} V(s)$; the drawdown at time $t$ is then
+\[
+  D(t) = \frac{M(t) - V(t)}{M(t)}.
+\]
+The maximum drawdown is $\mathrm{MDD} = \max_t D(t)$, the largest peak-to-trough
+decline in cumulative equity; the maximum drawdown duration is the longest interval
+$[t_1, t_2]$ such that $V(t) < M(t_1)$ for all $t \in (t_1, t_2]$. Chan treats
+these not as abstract statistics but as personal psychological thresholds: the
+question is not what the numbers are but whether you can survive them without
+abandoning the strategy at the worst moment. A strategy whose maximum drawdown
+exceeds your temperament's tolerance is not a good strategy for you, regardless of
+its long-run expectation.
 
 \subsection*{Pitfalls}
 
