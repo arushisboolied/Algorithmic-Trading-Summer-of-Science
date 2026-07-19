@@ -1,1 +1,1 @@
-# Algorithmic-Trading-Summer-of-Science
+# Algorithmic-Trading
