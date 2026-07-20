@@ -95,13 +95,215 @@ The chapter ends with a note on strategy refinement. A candidate strategy pulled
 
 = Coding Project
 
-Applied the learnings from these chapters by creating a backtester that evaluates a simple moving average (SMA) trading strategy on historical market data. The project focuses on implementing the complete research workflow discussed by Chan: generating trading signals, simulating trade execution, measuring returns, and evaluating performance metrics through historical backtesting.
+Applied the learnings from these chapters by building a small suite of Python backtesting tools, progressing from simple exploratory data work toward a modular, class-based backtesting engine. The project focuses on implementing the complete research workflow discussed by Chan: pulling and cleaning historical price data, generating trading signals, simulating trade execution, and measuring performance through historical backtesting.
 
 The repository is available at:
 
-#align(center)[#link("https://github.com/arushisboolied/Algorithmic-Trading-Summer-of-Science")]
+#align(center)[#link("https://github.com/arushisboolied/Algorithmic-Trading")]
 
-The project served as a practical exercise in translating quantitative trading concepts into code and reinforced the importance of strategy validation, performance measurement, and avoiding common backtesting pitfalls.
+== Week 1 --- Data Collection and Normalization
+
+The first step was simply getting clean, comparable price series for a handful of Indian-market assets, the Nifty 50 and Sensex indices, gold, Reliance Industries, and the Nifty Bank index, pulled via `yfinance` and rebased to a common starting value of 100 so that relative performance could be read directly off the chart.
+
+```python
+import yfinance as yf
+import pandas as pd
+import plotly.express as px
+import plotly.io as pio
+from datetime import datetime, timedelta
+
+# assets that we are gonna be watching
+tickers = ['^NSEI','^BSESN','GLD','RELIANCE.NS','^NSEBANK']
+
+# prices till today
+end_date = datetime.today()
+
+# prices from 5 years ago
+start_date = end_date - timedelta(days = 5*365)
+
+# dataframe to store the closing prices of each day
+close_df = pd.DataFrame()
+
+# building the dataframe
+for ticker in tickers:
+    data = yf.download(ticker,start = start_date, end = end_date)
+    close_df[ticker] = data['Close']
+
+# fixing missing values
+close_df = close_df.ffill().dropna()
+
+# dataframe to normalize the prices and makes every asset start at 100
+price_df = close_df/close_df.iloc[0] * 100
+
+# plotting data using plotly
+fig = px.line(
+    price_df,
+    x=price_df.index,
+    y=price_df.columns,
+    title = 'Normalized Comparison'
+)
+```
+
+#figure(
+  image("images/week1_data.png", width: 85%),
+  caption: [Normalized five-year price comparison across the Nifty 50, Sensex, gold, Reliance, and the Nifty Bank index, each rebased to 100 at the start of the window.],
+)
+
+== Week 2 --- A Simple SMA Crossover Strategy
+
+The second week turned the Week 1 data pipeline into an actual signal: a fast/slow simple-moving-average (SMA) crossover on the Nifty 50, with a 10-day SMA as the fast average and a 100-day SMA as the slow one. A bullish crossover (fast SMA moving above the slow SMA) is flagged as a buy signal, and a bearish crossover (fast SMA moving below the slow SMA) as a sell signal, using `numpy.vectorize` to apply the crossover test row by row.
+
+```python
+import yfinance as yf
+import numpy as np
+import pandas as pd
+import plotly.express as px
+import plotly.io as pio
+from datetime import datetime,timedelta
+
+# Settings
+security = '^NSEI'
+end_date = datetime.today()
+start_date = end_date - timedelta(1000)
+fsma_period = 10
+ssma_period = 100
+
+# Collecting data
+data = yf.download(security,start=start_date,end=end_date)
+df = pd.DataFrame(data)
+df.columns = df.columns.get_level_values(0)
+
+# Calculating fast sma and slow sma
+df['Fast_sma'] = df['Close'].rolling(fsma_period).mean()
+df['Slow_sma'] = df['Close'].rolling(ssma_period).mean()
+
+# Finding crossovers
+df['Prev_fsma'] = df['Fast_sma'].shift(1)
+df['Prev_ssma'] = df['Slow_sma'].shift(1)
+df.dropna(inplace = True)
+
+def find_crossover(prev_fsma, prev_ssma, fsma, ssma):
+    if fsma > ssma and prev_fsma <= prev_ssma:
+        return 'Bullish Crossover'
+    elif fsma < ssma and prev_fsma >= prev_ssma:
+        return 'Bearish Crossover'
+    return None
+
+df['Crossover'] = np.vectorize(find_crossover)(
+    df['Prev_fsma'], df['Prev_ssma'], df['Fast_sma'], df['Slow_sma']
+)
+
+signal_buy = df[df['Crossover'] == 'Bullish Crossover'].copy()
+signal_sell = df[df['Crossover'] == 'Bearish Crossover'].copy()
+```
+
+#figure(
+  image("images/week2_prices_smas.png", width: 85%),
+  caption: [Nifty 50 closing price with the 10-day and 100-day SMAs overlaid.],
+)
+
+#figure(
+  image("images/week2_positions.png", width: 85%),
+  caption: [The same chart annotated with buy (green, upward triangle) and sell (red, downward triangle) markers wherever a crossover fires.],
+)
+
+== Weeks 3--4 --- A Modular Backtesting Engine
+
+The final stage of the project rebuilt the Week 2 script as a proper, reusable backtester, splitting the pipeline into four cooperating classes: `Data` for fetching and cleaning prices, `SMA` for signal generation, `Portfolio` for simulating trade execution against those signals, and `PerformanceMetrics` for scoring the resulting equity curve. A thin `Backtester` class and a `config.py` settings file tie the pieces together, so that changing the ticker, SMA windows, commission rate, or capital base is a one-line edit rather than a rewrite.
+
+```python
+# config.py
+INITIAL_CAPITAL = 100000
+
+SHORT_WINDOW = 10
+LONG_WINDOW = 100
+
+TICKER = 'RELIANCE.NS'
+START_DATE = '2022-01-01'
+END_DATE = '2026-01-01'
+
+RISK_FREE_RATE = 0.04
+COMMISSION = 0.001
+```
+
+The signal logic itself is a direct generalisation of Week 2's crossover test, now expressed as the sign of the difference between the short and long SMAs, with `diff().clip(-1, 1)` picking out only the instants where that sign actually flips:
+
+```python
+# src/strategy.py
+class SMA:
+    def __init__(self, short_window: int = 10, long_window: int = 100):
+        self.short_window = short_window
+        self.long_window = long_window
+
+    def compute_sma(self, df):
+        df = df.copy()
+        df[f"SMA_{self.short_window}"] = df['Close'].rolling(window=self.short_window).mean()
+        df[f"SMA_{self.long_window}"] = df['Close'].rolling(window=self.long_window).mean()
+        return df
+
+    def generate_signal(self, df):
+        df = self.compute_sma(df)
+        short_col = f"SMA_{self.short_window}"
+        long_col = f"SMA_{self.long_window}"
+
+        raw = pd.Series(0, index=df.index)
+        raw[df[short_col] > df[long_col]] = 1
+        raw[df[short_col] < df[long_col]] = -1
+
+        df["Signal"] = raw.diff().clip(-1, 1)
+        return df
+```
+
+`Portfolio.apply_signals` is where Chan's backtesting warnings from Chapter 3 are put into practice directly: trades execute on the *next* day's open rather than the signal day's close (avoiding look-ahead bias), and every buy and sell is charged a proportional commission before cash and holdings are updated:
+
+```python
+# src/portfolio.py (execution loop)
+df['Trade'] = df['Signal'].shift(1).fillna(0)
+
+for i in range(1, n):
+    signal = df['Trade'].iloc[i]
+    open_price = df["Open"].iloc[i]
+    prev_pos, prev_cash = position[i - 1], cash[i - 1]
+
+    if signal == 1 and prev_pos == 0:            # BUY
+        shares = prev_cash // open_price
+        cost = shares * open_price
+        fee = cost * self.commission
+        position[i] = shares
+        cash[i] = prev_cash - cost - fee
+
+    elif signal == -1 and prev_pos > 0:           # SELL
+        proceeds = prev_pos * open_price
+        fee = proceeds * self.commission
+        position[i] = 0
+        cash[i] = prev_cash + proceeds - fee
+
+    else:                                          # HOLD
+        position[i] = prev_pos
+        cash[i] = prev_cash
+
+df["Holdings"] = df["Position"] * df["Close"]
+df["Total"] = df["Cash"] + df["Holdings"]
+```
+
+`PerformanceMetrics` then reduces the resulting equity curve and trade log to exactly the numbers Chan's Backtesting chapter flags as essential: total and annualised return, the Sharpe ratio (net of a configurable risk-free rate), maximum drawdown, win rate, and profit factor.
+
+```python
+# src/metrics.py (summary)
+@classmethod
+def summary_report(cls, equity_curve, trade_history):
+    return {
+        "Total Return (%)": round(cls.total_return(equity_curve), 2),
+        "Annualised Return (%)": round(cls.annualised_return(equity_curve), 2),
+        "Sharpe Ratio": round(cls.sharpe_ratio(equity_curve), 3),
+        "Max Drawdown (%)": round(cls.max_drawdown(equity_curve), 2),
+        "Win Rate (%)": round(cls.win_rate(trade_history), 1),
+        "Profit Factor": round(cls.profit_factor(trade_history), 2),
+        "Total Trades": len([t for t in trade_history if t["action"] == "BUY"]),
+    }
+```
+
+Running `main.py` fetches Reliance Industries data, generates signals, simulates the portfolio, prints this summary report to the console, and produces an interactive two-panel Plotly chart (price and SMAs with buy/sell markers on top, the equity curve against a dashed initial-capital baseline below) via `Backtester.plot()`. The engine's modularity is the point: the same four classes work unchanged for a different ticker, a different SMA pair, or a different commission schedule, which is exactly the kind of transparent, low-parameter design Chan recommends over elaborate curve-fitted logic.
 
 #v(1em)
 #line(length: 100%, stroke: accentgray)
@@ -109,6 +311,7 @@ The project served as a practical exercise in translating quantitative trading c
   size: 9pt,
   fill: accentgray,
 )[Source: Chan, Ernest P. _Quantitative Trading: How to Build Your Own Algorithmic Trading Business_, 2nd ed. Wiley, 2021.]
+
 
 #pagebreak()
 
